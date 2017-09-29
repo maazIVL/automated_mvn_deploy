@@ -1,0 +1,193 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.mkyong</groupId>
+    <artifactId>CounterWebApp</artifactId>
+    <packaging>war</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <name>CounterWebApp Maven Webapp</name>
+    <url>http://maven.apache.org</url>
+    <properties>
+        <jdk.version>1.7</jdk.version>
+        <spring.version>4.1.1.RELEASE</spring.version>
+        <jstl.version>1.2</jstl.version>
+        <junit.version>4.11</junit.version>
+        <logback.version>1.0.13</logback.version>
+        <jcl-over-slf4j.version>1.7.5</jcl-over-slf4j.version>
+        <!-- 	<remote.protocol>http</remote.protocol>
+      	<remote.port>8881</remote.port>
+      	<remote.hostname>localhost</remote.hostname>
+      	<remote.context>/</remote.context>	 -->
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.codehaus.cargo</groupId>
+            <artifactId>cargo-core-container-tomcat</artifactId>
+            <version>1.6.4</version>
+        </dependency>
+        <!-- Unit Test -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+        </dependency>
+        <!-- Spring Core -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${jcl-over-slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <!-- jstl -->
+        <dependency>
+            <groupId>jstl</groupId>
+            <artifactId>jstl</artifactId>
+            <version>${jstl.version}</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <finalName>CounterWebApp</finalName>
+        <plugins>
+            <!-- Set JDK Compiler Level -->
+            <plugin>
+                <groupId>org.codehaus.cargo</groupId>
+                <artifactId>cargo-maven2-plugin</artifactId>
+                <version>1.6.4</version>
+                <configuration>
+                    <!-- Deployer configuration -->
+                    <container>
+                        <containerId>tomcat7x</containerId>
+                        <type>remote</type>
+                    </container>
+                    <deployer>
+                        <type>remote</type>
+                    </deployer>
+                    <deployables>
+                        <deployable>
+                            <groupId>com.mkyong</groupId>
+                            <artifactId>CounterWebApp</artifactId>
+                            <type>war</type>
+                            <properties>
+                                <context>${tc.context}</context>
+                            </properties>
+                        </deployable>
+                    </deployables>
+                    <configuration>
+                        <type>runtime</type>
+                        <properties>
+                            <cargo.protocol>${tc.protocol}</cargo.protocol>
+                            <cargo.remote.username>${tc.remote.username}</cargo.remote.username>
+                            <cargo.remote.password>${tc.remote.password}</cargo.remote.password>
+                            <cargo.hostname>${tc.hostname}</cargo.hostname>
+                            <cargo.servlet.port>${tc.servlet.port}</cargo.servlet.port>
+                            <cargo.tomcat.manager.url>${tc.remote.username}</cargo.tomcat.manager.url>
+                        </properties>
+                    </configuration>
+                </configuration>
+            </plugin>
+        </plugins>
+        <!--new moduel for resource-->
+        <filters>
+            <filter>src/main/filters/my-filter-values.properties</filter>
+        </filters>
+        <resources>
+            <resource>
+                <directory>src/main/resources-filtered</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <!--new moduel for resource-->
+    </build>
+    <profiles>
+        <profile>
+            <id>env-syd</id>
+            <!-- Activated when -Denv=foo1 is given as parameter. -->
+            <activation>
+                <property>
+                    <name>region</name>
+                    <value>sydney</value>
+                </property>
+            </activation>
+            <properties>
+                <tc.protocol>http</tc.protocol>
+                <tc.remote.username>tomcat</tc.remote.username>
+                <tc.remote.password>admin</tc.remote.password>
+                <tc.hostname>localhost</tc.hostname>
+                <tc.servlet.port>8881</tc.servlet.port>
+                <tc.tomcat.manager.url>http://localhost:8881</tc.tomcat.manager.url>
+                <!-- <tc.context -->
+            </properties>
+        </profile>
+        <profile>
+            <id>env-perth</id>
+            <!-- Activated when -Denv=foo2 is given as parameter. -->
+            <activation>
+                <property>
+                    <name>region</name>
+                    <value>perth</value>
+                </property>
+            </activation>
+            <properties>
+                <tc.protocol>http</tc.protocol>
+                <tc.remote.username>tomcat</tc.remote.username>
+                <tc.remote.password>admin</tc.remote.password>
+                <tc.hostname>localhost</tc.hostname>
+                <tc.servlet.port>8882</tc.servlet.port>
+                <tc.tomcat.manager.url>http://localhost:8882</tc.tomcat.manager.url>
+            </properties>
+        </profile>
+        <!--Envoirment Production and variabale-->
+        <profile>
+            <id>env-stage</id>
+            <!-- Activated when -Denv=foo1 is given as parameter. -->
+            <activation>
+                <property>
+                    <name>env</name>
+                    <value>stage</value>
+                </property>
+            </activation>
+            <properties>
+                <tc.protocol>http</tc.protocol>
+                <tc.context>Staging</tc.context>
+            </properties>
+        </profile>
+        <profile>
+            <id>env-prod</id>
+            <!-- Activated when -Denv=foo2 is given as parameter. -->
+            <activation>
+                <property>
+                    <name>env</name>
+                    <value>prod</value>
+                </property>
+            </activation>
+            <properties>
+                <tc.protocol>http</tc.protocol>
+                <tc.context>Production</tc.context>
+            </properties>
+        </profile>
+    </profiles>
+</project>

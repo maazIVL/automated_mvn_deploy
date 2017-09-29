@@ -1,0 +1,8 @@
+${tc.protocol}
+${tc.remote.username}
+${tc.remote.password}
+${tc.hostname}
+${tc.servlet.port}
+${tc.tomcat.manager.url}
+
+${tc.context}
